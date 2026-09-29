@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Student Result Portal</title>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #4f46e5, #7c3aed);
+    min-height: 100vh;
+    padding: 30px 15px;
+}
+
+.container {
+    width: 100%;
+    max-width: 800px;
+    margin: auto;
+}
+
+.header {
+    text-align: center;
+    color: white;
+    margin-bottom: 25px;
+}
+
+.header h1 {
+    margin-bottom: 8px;
+}
+
+.card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #333;
+    margin-top: 0;
+}
+
+.row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.input-group {
+    margin-bottom: 15px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 7px;
+    color: #444;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 16px;
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    background: #4f46e5;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+button:hover {
+    background: #3730a3;
+}
+
+#result {
+    display: none;
+}
+
+.result-box {
+    border-radius: 12px;
+    padding: 20px;
+    background: #f8fafc;
+}
+
+.student-info {
+    background: #eef2ff;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.marks-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+.marks-table th,
+.marks-table td {
+    padding: 12px;
+    border: 1px solid #ddd;
+    text-align: center;
+}
+
+.marks-table th {
+    background: #4f46e5;
+    color: white;
+}
+
+.total {
+    font-size: 22px;
+    font-weight: bold;
+    text-align: center;
+    margin-top: 20px;
+}
+
+.pass {
+    color: green;
+}
+
+.fail {
+    color: red;
+}
+
+@media (max-width: 600px) {
+    .row {
+        grid-template-columns: 1fr;
+    }
+
+    .card {
+        padding: 18px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>🎓 Student Result Portal</h1>
+        <p>Attendance • Internal Marks • Practical Marks</p>
+    </div>
+
+    <!-- INPUT FORM -->
+    <div class="card">
+
+        <h2>Student Details</h2>
+
+        <div class="row">
+
+            <div class="input-group">
+                <label>Student Name</label>
+                <input type="text" id="studentName" placeholder="Enter student name">
+            </div>
+
+            <div class="input-group">
+                <label>Enrollment Number</label>
+                <input type="text" id="enrollment" placeholder="Enter enrollment number">
+            </div>
+
+        </div>
+
+        <h2>Attendance</h2>
+
+        <div class="row">
+
+            <div class="input-group">
+                <label>Total Lectures</label>
+                <input type="number" id="totalLectures" placeholder="Example: 100">
+            </div>
+
+            <div class="input-group">
+                <label>Attended Lectures</label>
+                <input type="number" id="attendedLectures" placeholder="Example: 85">
+            </div>
+
+        </div>
+
+        <h2>Marks</h2>
+
+        <div class="row">
+
+            <div class="input-group">
+                <label>Internal Marks (out of 30)</label>
+                <input type="number" id="internal" min="0" max="30" placeholder="0 - 30">
+            </div>
+
+            <div class="input-group">
+                <label>Practical Marks (out of 20)</label>
+                <input type="number" id="practical" min="0" max="20" placeholder="0 - 20">
+            </div>
+
+        </div>
+
+        <div class="input-group">
+            <label>External Marks (out of 50)</label>
+            <input type="number" id="external" min="0" max="50" placeholder="0 - 50">
+        </div>
+
+        <button onclick="showResult()">
+            📊 View Result
+        </button>
+
+    </div>
+
+
+    <!-- RESULT -->
+    <div class="card" id="result">
+
+        <h2>📋 Student Result</h2>
+
+        <div class="result-box">
+
+            <div class="student-info">
+                <p>
+                    <strong>Name:</strong>
+                    <span id="showName"></span>
+                </p>
+
+                <p>
+                    <strong>Enrollment:</strong>
+                    <span id="showEnrollment"></span>
+                </p>
+
+                <p>
+                    <strong>Attendance:</strong>
+                    <span id="showAttendance"></span>
+                </p>
+            </div>
+
+            <table class="marks-table">
+
+                <tr>
+                    <th>Subject Component</th>
+                    <th>Marks Obtained</th>
+                    <th>Maximum Marks</th>
+                </tr>
+
+                <tr>
+                    <td>Internal</td>
+                    <td id="showInternal"></td>
+                    <td>30</td>
+                </tr>
+
+                <tr>
+                    <td>Practical</td>
+                    <td id="showPractical"></td>
+                    <td>20</td>
+                </tr>
+
+                <tr>
+                    <td>External</td>
+                    <td id="showExternal"></td>
+                    <td>50</td>
+                </tr>
+
+                <tr>
+                    <th>Total</th>
+                    <th id="showTotal"></th>
+                    <th>100</th>
+                </tr>
+
+            </table>
+
+            <div class="total">
+                Percentage:
+                <span id="percentage"></span>%
+                <br><br>
+                Result:
+                <span id="status"></span>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function showResult() {
+
+    // Get student information
+    const name = document.getElementById("studentName").value.trim();
+    const enrollment = document.getElementById("enrollment").value.trim();
+
+    // Get attendance
+    const totalLectures =
+        Number(document.getElementById("totalLectures").value);
+
+    const attendedLectures =
+        Number(document.getElementById("attendedLectures").value);
+
+    // Get marks
+    const internal =
+        Number(document.getElementById("internal").value);
+
+    const practical =
+        Number(document.getElementById("practical").value);
+
+    const external =
+        Number(document.getElementById("external").value);
+
+
+    // Validation
+    if (name === "" || enrollment === "") {
+        alert("Please enter student name and enrollment number.");
+        return;
+    }
+
+    if (totalLectures <= 0 ||
+        attendedLectures < 0 ||
+        attendedLectures > totalLectures) {
+
+        alert("Please enter valid attendance details.");
+        return;
+    }
+
+    if (internal < 0 || internal > 30 ||
+        practical < 0 || practical > 20 ||
+        external < 0 || external > 50) {
+
+        alert("Please enter valid marks.");
+        return;
+    }
+
+
+    // Calculate attendance
+    const attendance =
+        (attendedLectures / totalLectures) * 100;
+
+
+    // Calculate total
+    const total =
+        internal + practical + external;
+
+
+    // Percentage
+    const percentage = total;
+
+
+    // Pass condition
+    // Example:
+    // Attendance >= 75%
+    // Total >= 40
+    let passed = true;
+
+    if (attendance < 75) {
+        passed = false;
+    }
+
+    if (total < 40) {
+        passed = false;
+    }
+
+
+    // Display student information
+    document.getElementById("showName").innerText = name;
+
+    document.getElementById("showEnrollment").innerText =
+        enrollment;
+
+    document.getElementById("showAttendance").innerText =
+        attendance.toFixed(2) + "%";
+
+
+    // Display marks
+    document.getElementById("showInternal").innerText =
+        internal;
+
+    document.getElementById("showPractical").innerText =
+        practical;
+
+    document.getElementById("showExternal").innerText =
+        external;
+
+    document.getElementById("showTotal").innerText =
+        total;
+
+
+    // Display percentage
+    document.getElementById("percentage").innerText =
+        percentage.toFixed(2);
+
+
+    // Display result
+    const status = document.getElementById("status");
+
+    if (passed) {
+
+        status.innerText = "PASS";
+        status.className = "pass";
+
+    } else {
+
+        status.innerText = "FAIL";
+        status.className = "fail";
+
+    }
+
+
+    // Show result section
+    document.getElementById("result").style.display = "block";
+
+    // Scroll to result
+    document.getElementById("result").scrollIntoView({
+        behavior: "smooth"
+    });
+}
+
+</script>
+
+</body>
+</html>
